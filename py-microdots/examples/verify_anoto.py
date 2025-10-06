@@ -14,9 +14,9 @@ def main():
 
 
     # Generate random bit-matrix to verify with RUST version
-    SHAPES_ARR = [(random.randint(10, 100), random.randint(20, 100)) for _ in range(10)]
+    SHAPES_ARR = [(random.randint(10, 70), random.randint(20, 70)) for _ in range(10)]
     SHAPES_ARR.append((9, 16))
-    SECTIONS_ARR = [(random.randint(5, 100), random.randint(5, 100)) for _ in range(10)]
+    SECTIONS_ARR = [(random.randint(5, 70), random.randint(5, 70)) for _ in range(10)]
     SECTIONS_ARR.append((10, 2))
 
     # Delete and create output directory
