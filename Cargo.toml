@@ -1,0 +1,14 @@
+[package]
+name = "anoto_verify_rust"
+version = "0.1.0"
+edition = "2021"
+authors = ["anoto_verify_rust contributors"]
+description = "A Rust library for encoding and decoding 2D locations based on the Anoto dot pattern approach"
+license = "MIT"
+repository = "https://github.com/shoutmarble/anoto_verify_rust"
+readme = "README.md"
+keywords = ["anoto", "microdots", "encoding", "decoding", "2d-patterns"]
+categories = ["algorithms", "encoding"]
+
+[dependencies]
+ndarray = "0.16"
