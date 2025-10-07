@@ -1,0 +1,1 @@
+/mnt/c/Users/Terry/Documents/git/anoto_verify_rust/anoto_dots/target/debug/libanoto_dots.rlib: /mnt/c/Users/Terry/Documents/git/anoto_verify_rust/anoto_dots/src/lib.rs /mnt/c/Users/Terry/Documents/git/anoto_verify_rust/anoto_dots/src/persist.rs /mnt/c/Users/Terry/Documents/git/anoto_verify_rust/anoto_dots/src/plotting.rs
