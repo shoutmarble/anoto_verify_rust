@@ -9,19 +9,19 @@
 
 > INSTALL PYTHON DEPENDENCIES
 > > cd requirements/
-> > pip install -r requirements.txt
+> > pip install -r requirements.txt  
 
 > Install necessary tools for `py-microdots`
 > > pip install setuptools
 
 > BUILD AND INSTALL `py-microdots`
-> > python3 setup.py build
+> > python3 setup.py build  
 > > python3 setup.py install
 
 > RUN `py-microdots` EXAMPLES
 
 > cd examples/
-> > python3 hello_anoto.py
+> > python3 hello_anoto.py  
 > > python3 verify_anoto.py 
 
 `python3 verify_anoto.py`
