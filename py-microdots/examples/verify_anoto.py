@@ -50,7 +50,7 @@ def main():
             for row in G:
                 f.write(' '.join(map(str, row)) + '\n')
 
-        filename_pdf = f'output/G_{dot_shape[0]}x{dot_shape[1]}.pdf'
+        filename_pdf = f'output/G__{dot_shape[0]}_{dot_shape[1]}__{dot_section[0]}_{dot_section[1]}.pdf'
 
         fig, ax = plt.subplots(figsize=(20, 20))
         mdots.draw_dots(G, grid_size=1.0, show_grid=True, ax=ax)
