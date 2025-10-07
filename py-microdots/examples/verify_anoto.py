@@ -38,8 +38,9 @@ def main():
         pos = codec.decode_position(S)
         sec = codec.decode_section(S, pos=pos)
 
-        filename_json = f'output/G_{dot_shape[0]}x{dot_shape[1]}.json'
-        filename_txt = f'output/G_{dot_shape[0]}x{dot_shape[1]}.txt'
+        filename_json = f'output/G__{dot_shape[0]}_{dot_shape[1]}__{dot_section[0]}_{dot_section[1]}.json'
+        filename_txt = f'output/G__{dot_shape[0]}_{dot_shape[1]}__{dot_section[0]}_{dot_section[1]}.txt'
+
         with open(filename_json, 'w') as f:
             json.dump(G.tolist(), f)
 
