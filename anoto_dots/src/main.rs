@@ -395,12 +395,22 @@ fn find_subsequence(haystack: &[i8], needle: &[i8]) -> Option<usize> {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
+
+    //     [0,0]                  UP
+    //       ^                    ^
+    //       |                    |
+    // [1,0]   [0,1]       LEFT <-+->  RIGHT
+    //       |                    |
+    //       v                    v
+    //     [1,1]                 DOWN
+
+
     // Use the default embodiment with A4 sequence fixed
     let codec = anoto_6x6_a4_fixed();
 
     // Generate a bit-matrix for section (10,2) - matching Python example
-    // let bitmatrix = codec.encode_bitmatrix((9, 16), (10, 2));
-    let bitmatrix = codec.encode_bitmatrix((9, 16), (120, 20));
+    let bitmatrix = codec.encode_bitmatrix((9, 16), (10, 2));
+    // let bitmatrix = codec.encode_bitmatrix((9, 16), (120, 20));
 
 
     println!("Generated bitmatrix with shape: ({}, {}, {})", 
@@ -416,7 +426,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     println!("\nMatrix matches expected Python output: {}", matches);
              
     // Render dots to dots2.png to match the filename you mentioned
-    anoto_dots::plotting::draw_dots(&bitmatrix, 1.0, "anoto_dots.png")?;
+    anoto_dots::plotting::draw_dots(&bitmatrix, 1.0)?;
     println!("Dot pattern saved as anoto_dots.png");
 
     // Decode the same partial matrix as Python example: G[3:3+6, 7:7+6]
@@ -517,9 +527,3 @@ fn verify_matrix_match(generated: &Array3<i8>, expected: &Array3<i8>) -> bool {
     true
 }
 
-// Cargo.toml dependencies would include:
-/*
-[dependencies]
-ndarray = "0.15"
-plotters = "0.3"
-*/
