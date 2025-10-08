@@ -4,15 +4,16 @@ use std::error::Error;
 // Drawing function using plotters
 pub fn draw_dots(
     bitmatrix: &ndarray::Array3<i8>,
-    _grid_size: f64) -> Result<(), Box<dyn Error>> {
+    _grid_size: f64,
+    base_filename: &str) -> Result<(), Box<dyn Error>> {
     // Persist the bitmatrix
-    crate::persist_json::save_bitmatrix_text(bitmatrix, "bitmatrix.txt")?;
-    crate::persist_json::save_bitmatrix_json(bitmatrix, "bitmatrix.json")?;
+    crate::persist_json::save_bitmatrix_text(bitmatrix, &format!("{}__X.txt", base_filename))?;
+    crate::persist_json::save_bitmatrix_json(bitmatrix, &format!("{}__X.json", base_filename))?;
 
-    let filename = "anoto_dots.png";
-    draw_dots_y_axis(bitmatrix, _grid_size)?;
+    let filename = format!("{}__X.png", base_filename);
+    draw_dots_y_axis(bitmatrix, _grid_size, &format!("{}__Y.png", base_filename))?;
 
-    let root_area = BitMapBackend::new(filename, (800, 400))
+    let root_area = BitMapBackend::new(&filename, (800, 400))
     .into_drawing_area();
     root_area.fill(&WHITE).unwrap();
 
@@ -49,29 +50,29 @@ pub fn draw_dots(
                     3 => &GREEN, // DOWN
                     _ => &BLACK,
                 };
-                let mut x_x :i32 = x.clone() as i32;
+                let mut x_x :i32 = x as i32;
                 let mut y_y :i32 = bitmatrix.dim().0 as i32 - 1 - y as i32;
                 match dot_type {
                     0 => { // UP
-                        x_x = x_x * 10;
+                        x_x *= 10;
                         y_y = y_y * 10 + 2;
                     }
                     1 => { // LEFT
                         x_x = (x_x * 10) - 2;
-                        y_y = y_y * 10;
+                        y_y *= 10;
                     },
                     2 => { // RIGHT
                         x_x = x_x * 10 + 2;
-                        y_y = y_y * 10;
+                        y_y *= 10;
                     }
                     3 => { // DOWN
-                        x_x = x_x * 10;
+                        x_x *= 10;
                         y_y = (y_y * 10) - 2;
                     },
                     _ => {}
                 };
 
-                Circle::new((x_x as i32, y_y as i32), 5, color.filled())
+                Circle::new((x_x, y_y), 5, color.filled())
             })
         })
     ).unwrap();
@@ -83,22 +84,22 @@ pub fn draw_dots(
 // Drawing function using plotters
 pub fn draw_dots_y_axis(
     bitmatrix: &ndarray::Array3<i8>,
-    _grid_size: f64) -> Result<(), Box<dyn Error>> {
+    _grid_size: f64,
+    filename: &str) -> Result<(), Box<dyn Error>> {
     // Persist the bitmatrix
-    crate::persist_json::save_bitmatrix_text(bitmatrix, "bitmatrix.txt")?;
-    crate::persist_json::save_bitmatrix_json(bitmatrix, "bitmatrix.json")?;
-    let filename = "anoto_dots_Y.png";
+    // crate::persist_json::save_bitmatrix_text(bitmatrix, "bitmatrix.txt")?;
+    // crate::persist_json::save_bitmatrix_json(bitmatrix, "bitmatrix.json")?;
     
     let root_area = BitMapBackend::new(&filename, (800, 400))
     .into_drawing_area();
     root_area.fill(&WHITE).unwrap();
 
-    println!("Bitmatrix size: {:?} (rows: {}, cols: {}, depth: {}, total elements: {})", 
-             bitmatrix.dim(), // tuple of (row, col, depth)
-             bitmatrix.dim().0, // rows
-             bitmatrix.dim().1, // cols
-             bitmatrix.dim().2,  // depth
-             bitmatrix.len());  // num elements
+    // println!("Bitmatrix size: {:?} (rows: {}, cols: {}, depth: {}, total elements: {})", 
+    //          bitmatrix.dim(), // tuple of (row, col, depth)
+    //          bitmatrix.dim().0, // rows
+    //          bitmatrix.dim().1, // cols
+    //          bitmatrix.dim().2,  // depth
+    //          bitmatrix.len());  // num elements
 
     let num_rows = bitmatrix.dim().0 as i32;
     let num_cols = bitmatrix.dim().1 as i32;
@@ -133,29 +134,29 @@ pub fn draw_dots_y_axis(
                     3 => &GREEN, // DOWN
                     _ => &BLACK,
                 };
-                let mut x_x :i32 = x.clone() as i32;
-                let mut y_y :i32 = (num_rows - 1) as i32 - y as i32;
+                let mut x_x :i32 = x as i32;
+                let mut y_y :i32 = (num_rows - 1) - y as i32;
                 match dot_type {
                     0 => { // UP
-                        x_x = x_x * 10;
+                        x_x *= 10;
                         y_y = y_y * 10 + 2;
                     }
                     1 => { // LEFT
                         x_x = (x_x * 10) - 2;
-                        y_y = y_y * 10;
+                        y_y *= 10;
                     },
                     2 => { // RIGHT
                         x_x = x_x * 10 + 2;
-                        y_y = y_y * 10;
+                        y_y *= 10;
                     }
                     3 => { // DOWN
-                        x_x = x_x * 10;
+                        x_x *= 10;
                         y_y = (y_y * 10) - 2;
                     },
                     _ => {}
                 };
 
-                Circle::new((x_x as i32, y_y as i32), 5, color.filled())
+                Circle::new((x_x, y_y), 5, color.filled())
             })
         })
     ).unwrap();

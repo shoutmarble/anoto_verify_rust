@@ -80,7 +80,7 @@ impl CRT {
         let mut result = 0i64;
         let product: i64 = self.moduli.iter().product();
 
-        for (_i, (&remainder, &modulus)) in remainders.iter().zip(self.moduli.iter()).enumerate() {
+        for (&remainder, &modulus) in remainders.iter().zip(self.moduli.iter()) {
             let partial_product = product / modulus;
             let inverse = self.mod_inverse(partial_product, modulus)?;
             result = (result + remainder * partial_product * inverse) % product;
@@ -97,6 +97,7 @@ impl CRT {
         Ok((x % m + m) % m)
     }
 
+    #[allow(clippy::only_used_in_recursion)]
     fn extended_gcd(&self, a: i64, b: i64) -> (i64, i64, i64) {
         if a == 0 {
             return (b, 0, 1);

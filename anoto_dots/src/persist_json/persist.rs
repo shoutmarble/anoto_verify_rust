@@ -1,53 +1,35 @@
-use serde::{Serialize, Deserialize};
 use ndarray::Array3;
+use std::error::Error;
 use std::fs::File;
 use std::io::Write;
-use std::error::Error;
-
-#[derive(Serialize, Deserialize)]
-struct BitMatrix {
-    data: Vec<Vec<Vec<i8>>>,
-}
 
 pub fn save_bitmatrix_text(bitmatrix: &Array3<i8>, filename: &str) -> Result<(), Box<dyn Error>> {
-    let mut content = String::new();
-    content.push_str("G = array([\n");
-    for (i, row) in bitmatrix.outer_iter().enumerate() {
-        content.push_str("           [");
-        for (j, col) in row.outer_iter().enumerate() {
-            content.push('[');
-            for (k, &val) in col.iter().enumerate() {
-                content.push_str(&format!("{}", val));
-                if k < col.len() - 1 {
-                    content.push_str(", ");
-                }
-            }
-            content.push(']');
-            if j < row.len() - 1 {
-                content.push_str(", ");
-            }
-        }
-        content.push(']');
-        if i < bitmatrix.dim().0 - 1 {
-            content.push_str(",\n");
-        } else {
-            content.push('\n');
-        }
-    }
-    content.push_str("          ], dtype=int8)\n");
-
     let mut file = File::create(filename)?;
-    file.write_all(content.as_bytes())?;
+    for row in 0..bitmatrix.dim().0 {
+        for col in 0..bitmatrix.dim().1 {
+            let x_bit = bitmatrix[[row, col, 0]];
+            let y_bit = bitmatrix[[row, col, 1]];
+            write!(file, "[{} {}]", x_bit, y_bit)?;
+            if col < bitmatrix.dim().1 - 1 {
+                write!(file, " ")?;
+            }
+        }
+        writeln!(file)?;
+    }
     Ok(())
 }
 
 pub fn save_bitmatrix_json(bitmatrix: &Array3<i8>, filename: &str) -> Result<(), Box<dyn Error>> {
-    let data: Vec<Vec<Vec<i8>>> = bitmatrix.outer_iter().map(|row| {
-        row.outer_iter().map(|col| col.to_vec()).collect()
-    }).collect();
-    let bm = BitMatrix { data };
-    let json = serde_json::to_string_pretty(&bm)?;
-    let mut file = File::create(filename)?;
-    file.write_all(json.as_bytes())?;
+    let mut data = Vec::new();
+    for row in 0..bitmatrix.dim().0 {
+        let mut row_data = Vec::new();
+        for col in 0..bitmatrix.dim().1 {
+            let pair = vec![bitmatrix[[row, col, 0]], bitmatrix[[row, col, 1]]];
+            row_data.push(pair);
+        }
+        data.push(row_data);
+    }
+    let file = File::create(filename)?;
+    serde_json::to_writer(file, &data)?;
     Ok(())
 }
