@@ -50,12 +50,26 @@ def main():
             for row in G:
                 f.write(' '.join(map(str, row)) + '\n')
 
-        filename_pdf = f'output/G__{dot_shape[0]}_{dot_shape[1]}__{dot_section[0]}_{dot_section[1]}.pdf'
+        filename_pdf = f'output/G__{dot_shape[0]}_{dot_shape[1]}__{dot_section[0]}_{dot_section[1]}__X.pdf'
 
         fig, ax = plt.subplots(figsize=(20, 20))
         mdots.draw_dots(G, grid_size=1.0, show_grid=True, ax=ax)
+        # Align Y-axis to start at 0 like X-axis and extend to show all data
+        ax.set_ylim(-1, G.shape[0] )  # Set Y-axis from 0 to number of rows 
+        ax.set_xlim(-1, G.shape[1] )  # Set X-axis from 0 to number of columns 
         fig.savefig(filename_pdf)
         plt.close(fig)
+
+        filename_pdf = f'output/G__{dot_shape[0]}_{dot_shape[1]}__{dot_section[0]}_{dot_section[1]}__PY.pdf'
+
+        fig, ax = plt.subplots(figsize=(20, 20))
+        mdots.draw_dots(G, grid_size=1.0, show_grid=True, ax=ax)
+        # Align Y-axis to start at 0 like X-axis and extend to show all data
+        ax.set_ylim(G.shape[0], -1)  # Set Y-axis from 0 to number of rows 
+        ax.set_xlim(-1, G.shape[1] )  # Set X-axis from 0 to number of columns 
+        fig.savefig(filename_pdf)
+        plt.close(fig)
+
 
 
     # Generate a bit-matrix for section (10,2)
@@ -66,6 +80,9 @@ def main():
 
     fig, ax = plt.subplots(figsize=(20, 20))
     mdots.draw_dots(G, grid_size=1.0, show_grid=True, ax=ax)
+    # Align Y-axis to start at 0 like X-axis and extend to show all data
+    ax.set_ylim(G.shape[0] + 1, -1)  # Set Y-axis from 0 to number of rows + 1
+    ax.set_xlim(-1, G.shape[1] + 1)  # Set X-axis from 0 to number of columns + 1
     fig.savefig("dots.pdf")
     plt.close(fig)
 
