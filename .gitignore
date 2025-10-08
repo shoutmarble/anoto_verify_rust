@@ -7,6 +7,7 @@ __pycache__/
 env/
 venv/
 .venv/
+venv_md/
 pip-log.txt
 pip-delete-this-directory.txt
 .tox/
@@ -25,6 +26,11 @@ coverage.xml
 # Rust
 target/
 Cargo.lock
+
+# Generated files
+*.png
+anoto_dots.png
+anoto_dots_Y.png
 
 # OS generated files
 .DS_Store

@@ -134,7 +134,7 @@ pub fn draw_dots_y_axis(
                     _ => &BLACK,
                 };
                 let mut x_x :i32 = x.clone() as i32;
-                let mut y_y :i32 = y as i32;
+                let mut y_y :i32 = (num_rows - 1) as i32 - y as i32;
                 match dot_type {
                     0 => { // UP
                         x_x = x_x * 10;
