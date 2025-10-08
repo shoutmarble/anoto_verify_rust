@@ -2,11 +2,6 @@ use ndarray::{Array2, Array3, Axis, s};
 use std::error::Error;
 use std::fmt;
 
-pub mod persist_json;
-pub mod anoto_matrix;
-
-pub use anoto_matrix::gen_matrix::gen_matrix;
-
 // Custom error type for decoding errors
 #[derive(Debug)]
 pub struct DecodingError {
@@ -22,7 +17,7 @@ impl fmt::Display for DecodingError {
 impl Error for DecodingError {}
 
 impl DecodingError {
-    pub fn new(message: &str) -> Self {
+    fn new(message: &str) -> Self {
         DecodingError {
             message: message.to_string(),
         }
@@ -399,4 +394,137 @@ fn find_subsequence(haystack: &[i8], needle: &[i8]) -> Option<usize> {
         .position(|window| window == needle)
 }
 
-pub mod make_plots;
+// fn main() -> Result<(), Box<dyn Error>> {
+pub fn gen_matrix() -> Result<(), Box<dyn Error>> {
+
+    //     [0,0]                  UP
+    //       ^                    ^
+    //       |                    |
+    // [1,0]   [0,1]       LEFT <-+->  RIGHT
+    //       |                    |
+    //       v                    v
+    //     [1,1]                 DOWN
+
+
+    // Use the default embodiment with A4 sequence fixed
+    let codec = anoto_6x6_a4_fixed();
+
+    // Generate a bit-matrix for section (10,2) - matching Python example
+    let bitmatrix = codec.encode_bitmatrix((9, 16), (10, 2));
+    // let bitmatrix = codec.encode_bitmatrix((9, 16), (120, 20));
+
+
+    println!("Generated bitmatrix with shape: ({}, {}, {})", 
+             bitmatrix.dim().0, bitmatrix.dim().1, bitmatrix.dim().2);
+
+    // Print the generated matrix to verify it matches the Python output
+    println!("\nGenerated bit matrix G:");
+    print_bit_matrix(&bitmatrix);
+
+    // Verify against expected output from Python comments
+    let expected_g = get_expected_g_matrix();
+    let matches = verify_matrix_match(&bitmatrix, &expected_g);
+    println!("\nMatrix matches expected Python output: {}", matches);
+             
+    // Render dots to dots2.png to match the filename you mentioned
+    crate::make_plots::draw_dots(&bitmatrix, 1.0)?;
+    println!("Dot pattern saved as anoto_dots.png");
+
+    // Decode the same partial matrix as Python example: G[3:3+6, 7:7+6]
+    let sub_matrix = bitmatrix.slice(s![3..9, 7..13, ..]).to_owned();
+    
+    println!("\nExtracted 6x6 partial matrix S from position (3,7):");
+    print_bit_matrix(&sub_matrix);
+
+    match codec.decode_position(&sub_matrix) {
+        Ok(pos) => {
+            println!("Decoded position: ({}, {})", pos.0, pos.1);
+            
+            match codec.decode_section(&sub_matrix, pos) {
+                Ok(sec) => {
+                    println!("pos: ({}, {}) sec: ({}, {}) rot: 0", pos.0, pos.1, sec.0, sec.1);
+                }
+                Err(e) => println!("Failed to decode section: {}", e),
+            }
+        }
+        Err(e) => println!("Failed to decode position: {}", e),
+    }
+
+    Ok(())
+}
+
+// Helper functions for verification
+fn print_bit_matrix(matrix: &Array3<i8>) {
+    println!("G = array([");
+    for row in 0..matrix.dim().0 {
+        print!("           [");
+        for col in 0..matrix.dim().1 {
+            let x_bit = matrix[[row, col, 0]];
+            let y_bit = matrix[[row, col, 1]];
+            print!("[{}, {}]", x_bit, y_bit);
+            if col < matrix.dim().1 - 1 {
+                print!(", ");
+            }
+        }
+        print!("]");
+        if row < matrix.dim().0 - 1 {
+            println!(",");
+        } else {
+            println!();
+        }
+    }
+    println!("          ], dtype=int8)");
+}
+
+fn get_expected_g_matrix() -> Array3<i8> {
+    // Expected G matrix from Python comments for section (10,2)
+    let data = [
+        [[1, 0], [1, 0], [0, 0], [1, 0], [0, 1], [0, 0], [1, 0], [1, 1], 
+         [1, 1], [1, 1], [0, 1], [0, 1], [1, 0], [1, 1], [1, 0], [1, 0]],
+        [[1, 0], [0, 0], [0, 1], [0, 1], [0, 1], [1, 1], [0, 1], [0, 0], 
+         [0, 1], [0, 0], [0, 0], [1, 1], [0, 0], [1, 0], [1, 0], [1, 0]],
+        [[1, 1], [0, 1], [0, 0], [1, 1], [1, 0], [1, 0], [0, 1], [1, 0], 
+         [0, 0], [1, 0], [0, 0], [0, 1], [0, 1], [1, 1], [0, 0], [1, 1]],
+        [[1, 0], [1, 1], [1, 0], [1, 0], [0, 0], [1, 0], [0, 1], [1, 1], 
+         [0, 1], [0, 0], [0, 1], [0, 1], [1, 1], [1, 0], [1, 0], [0, 1]],
+        [[0, 0], [0, 1], [1, 1], [1, 1], [1, 0], [1, 1], [0, 1], [0, 1], 
+         [0, 0], [1, 0], [1, 1], [1, 0], [1, 1], [0, 0], [1, 1], [1, 0]],
+        [[1, 0], [0, 0], [1, 0], [0, 0], [0, 0], [1, 0], [0, 1], [1, 0], 
+         [1, 0], [0, 1], [1, 1], [1, 1], [0, 1], [1, 1], [1, 0], [0, 1]],
+        [[0, 1], [0, 1], [0, 1], [0, 1], [1, 0], [0, 0], [0, 0], [1, 1], 
+         [1, 1], [0, 0], [1, 0], [1, 0], [1, 0], [0, 0], [0, 0], [0, 1]],
+        [[0, 1], [0, 0], [1, 1], [1, 0], [0, 1], [1, 0], [1, 0], [0, 0], 
+         [1, 1], [0, 0], [0, 1], [1, 1], [0, 0], [0, 1], [0, 1], [1, 0]],
+        [[1, 1], [1, 1], [1, 1], [0, 1], [0, 0], [0, 1], [0, 0], [0, 0], 
+         [0, 1], [1, 0], [1, 0], [1, 0], [1, 0], [1, 1], [1, 1], [0, 1]]
+    ];
+    
+    let mut matrix = Array3::<i8>::zeros((9, 16, 2));
+    for row in 0..9 {
+        for col in 0..16 {
+            matrix[[row, col, 0]] = data[row][col][0];
+            matrix[[row, col, 1]] = data[row][col][1];
+        }
+    }
+    matrix
+}
+
+fn verify_matrix_match(generated: &Array3<i8>, expected: &Array3<i8>) -> bool {
+    if generated.dim() != expected.dim() {
+        return false;
+    }
+    
+    for row in 0..generated.dim().0 {
+        for col in 0..generated.dim().1 {
+            for bit in 0..2 {
+                if generated[[row, col, bit]] != expected[[row, col, bit]] {
+                    println!("Mismatch at ({}, {}, {}): got {}, expected {}", 
+                            row, col, bit, generated[[row, col, bit]], expected[[row, col, bit]]);
+                    return false;
+                }
+            }
+        }
+    }
+    true
+}
+

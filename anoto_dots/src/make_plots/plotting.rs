@@ -6,8 +6,8 @@ pub fn draw_dots(
     bitmatrix: &ndarray::Array3<i8>,
     _grid_size: f64) -> Result<(), Box<dyn Error>> {
     // Persist the bitmatrix
-    crate::persist::save_bitmatrix_text(bitmatrix, "bitmatrix.txt")?;
-    crate::persist::save_bitmatrix_json(bitmatrix, "bitmatrix.json")?;
+    crate::persist_json::save_bitmatrix_text(bitmatrix, "bitmatrix.txt")?;
+    crate::persist_json::save_bitmatrix_json(bitmatrix, "bitmatrix.json")?;
 
     let filename = "anoto_dots.png";
     draw_dots_y_axis(bitmatrix, _grid_size)?;
@@ -85,8 +85,8 @@ pub fn draw_dots_y_axis(
     bitmatrix: &ndarray::Array3<i8>,
     _grid_size: f64) -> Result<(), Box<dyn Error>> {
     // Persist the bitmatrix
-    crate::persist::save_bitmatrix_text(bitmatrix, "bitmatrix.txt")?;
-    crate::persist::save_bitmatrix_json(bitmatrix, "bitmatrix.json")?;
+    crate::persist_json::save_bitmatrix_text(bitmatrix, "bitmatrix.txt")?;
+    crate::persist_json::save_bitmatrix_json(bitmatrix, "bitmatrix.json")?;
     let filename = "anoto_dots_Y.png";
     
     let root_area = BitMapBackend::new(&filename, (800, 400))
