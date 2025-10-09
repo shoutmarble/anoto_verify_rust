@@ -11,8 +11,6 @@ def main():
     # Use the default embodiment with A4 sequence fixed
     codec = mdots.anoto_6x6_a4_fixed
 
-
-
     # Generate random bit-matrix to verify with RUST version
     SHAPES_ARR = [(random.randint(10, 70), random.randint(20, 70)) for _ in range(10)]
     SHAPES_ARR.append((9, 16))
@@ -50,7 +48,7 @@ def main():
             for row in G:
                 f.write(' '.join(map(str, row)) + '\n')
 
-        filename_pdf = f'output/G__{dot_shape[0]}_{dot_shape[1]}__{dot_section[0]}_{dot_section[1]}__X.pdf'
+        filename_pdf = f'output/PY__{dot_shape[0]}_{dot_shape[1]}__{dot_section[0]}_{dot_section[1]}__X.pdf'
 
         fig, ax = plt.subplots(figsize=(20, 20))
         mdots.draw_dots(G, grid_size=1.0, show_grid=True, ax=ax)
@@ -60,7 +58,7 @@ def main():
         fig.savefig(filename_pdf)
         plt.close(fig)
 
-        filename_pdf = f'output/G__{dot_shape[0]}_{dot_shape[1]}__{dot_section[0]}_{dot_section[1]}__PY.pdf'
+        filename_pdf = f'output/G__{dot_shape[0]}_{dot_shape[1]}__{dot_section[0]}_{dot_section[1]}__Y.pdf'
 
         fig, ax = plt.subplots(figsize=(20, 20))
         mdots.draw_dots(G, grid_size=1.0, show_grid=True, ax=ax)

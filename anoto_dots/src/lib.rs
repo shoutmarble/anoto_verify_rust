@@ -5,7 +5,7 @@ use std::fmt;
 pub mod persist_json;
 pub mod anoto_matrix;
 
-pub use anoto_matrix::gen_matrix::gen_matrix;
+pub use anoto_matrix::gen_matrix::{gen_matrix, gen_matrix_from_json};
 
 // Custom error type for decoding errors
 #[derive(Debug)]

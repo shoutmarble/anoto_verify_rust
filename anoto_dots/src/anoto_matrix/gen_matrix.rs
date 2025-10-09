@@ -399,7 +399,33 @@ fn find_subsequence(haystack: &[i8], needle: &[i8]) -> Option<usize> {
 pub fn gen_matrix(x1: usize, y1: usize, x2: i32, y2: i32) -> Result<(), Box<dyn Error>> {
     let codec = crate::anoto_6x6_a4_fixed();
     let bitmatrix = codec.encode_bitmatrix((x1, y1), (x2, y2));
-    let base_filename = format!("ad__{}_{}__{}_{}", x1, y1, x2, y2);
+    let base_filename = format!("G__{}_{}__{}_{}", x1, y1, x2, y2);
+    crate::make_plots::plotting::draw_dots(&bitmatrix, 10.0, &base_filename)?;
+    Ok(())
+}
+
+pub fn gen_matrix_from_json(filename: &str, x2: i32, y2: i32) -> Result<(), Box<dyn Error>> {
+    use std::fs::File;
+    use std::io::Read;
+
+    let mut file = File::open(filename)?;
+    let mut contents = String::new();
+    file.read_to_string(&mut contents)?;
+
+    let data: Vec<Vec<Vec<i8>>> = serde_json::from_str(&contents)?;
+
+    let rows = data.len();
+    let cols = data[0].len();
+    let mut bitmatrix = Array3::<i8>::zeros((rows, cols, 2));
+
+    for i in 0..rows {
+        for j in 0..cols {
+            bitmatrix[[i, j, 0]] = data[i][j][0];
+            bitmatrix[[i, j, 1]] = data[i][j][1];
+        }
+    }
+
+    let base_filename = format!("J__{}_{}__{}_{}", rows, cols, x2, y2);
     crate::make_plots::plotting::draw_dots(&bitmatrix, 10.0, &base_filename)?;
     Ok(())
 }
