@@ -1,13 +1,22 @@
+> `INSTALL PIP`
+> `sudo apt install python3-pip`
+>
+> `INSTALL PIP`
+> > `curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py`
+> > `python3 get-pip.py`
 
->  `INSTALL PYTHON VENV` to add `PYTHON` dependences
+>  `CREATE VENV PYTHON ENVIRONMENT` to add `PYTHON` dependences
 
 > >`python3 -m venv venv_md`
 
 > Enable the Python "Virtual Environment"
 
 > > `. venv_md/bin/activate`
+> > `source venv_md/bin/activate`
 
 > INSTALL PYTHON DEPENDENCIES
+> > pip install -r requirements/requirements.txt  
+
 > > cd requirements/
 > > pip install -r requirements.txt  
 

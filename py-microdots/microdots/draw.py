@@ -36,10 +36,10 @@ def draw_dots(
     if offset_lut is None:
         offset_lut = np.array(
             [
-                [0, 1.0],  # 0: north
-                [1.0, 0.0],  # 1: east
-                [-1.0, 0.0],  # 2: west
-                [0.0, -1.0],  # 3: south
+                [0, -1.0],  # 0: north
+                [-1.0, 0.0],  # 1: east
+                [1.0, 0.0],  # 2: west
+                [0.0, 1.0],  # 3: south
             ]
         )
     offset_scale = grid_size * 1 / 6
@@ -50,7 +50,7 @@ def draw_dots(
     offsets = offset_lut[bitmatrix] * offset_scale  # (M,N,2)
     dots = np.stack(
         np.meshgrid(
-            range(1, bitmatrix.shape[1] + 1), range(1, bitmatrix.shape[0] + 1), indexing="xy"
+            range(bitmatrix.shape[1]), range(bitmatrix.shape[0]), indexing="xy"
         ),
         -1,
     )
@@ -58,18 +58,13 @@ def draw_dots(
     ax.scatter(dots[..., 0], dots[..., 1], s=dot_scale, marker="o", color="k", zorder=2)
 
     if show_grid:
-        ax.set_xticks(np.arange(1, dots.shape[1] + 1) * grid_size)
-        ax.set_yticks(np.arange(1, dots.shape[0] + 1) * grid_size)
+        ax.set_xticks(np.arange(dots.shape[1]) * grid_size)
+        ax.set_yticks(np.arange(dots.shape[0]) * grid_size)
         ax.grid(which="major", alpha=0.4, linestyle="--", color="r", zorder=0)
 
     if set_ax_props:
+        ax.invert_yaxis()  # top-left origin
         ax.set_aspect("equal")
-        ax.spines['left'].set_position('zero')
-        ax.spines['bottom'].set_position('zero')
-        ax.spines['right'].set_visible(False)
-        ax.spines['top'].set_visible(False)
-        ax.xaxis.set_ticks_position('bottom')
-        ax.yaxis.set_ticks_position('left')
 
 
 if __name__ == "__main__":
