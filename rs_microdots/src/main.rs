@@ -1,7 +1,9 @@
 use clap::{Arg, Command};
 use std::error::Error;
 
+
 fn main() -> Result<(), Box<dyn Error>> {
+
     let app = Command::new("anoto_dots")
         .version("1.0")
         .author("Your Name <your.email@example.com>")
@@ -10,9 +12,9 @@ fn main() -> Result<(), Box<dyn Error>> {
             Arg::new("generate")
                 .short('g')
                 .long("generate")
-                .help("Generate Anoto dot pattern with optional shape and section: x1 y1 x2 y2 (defaults: 9 16 10 2)")
+                .help("Generate Anoto dot pattern with shape and section: height width sect_u sect_v (defaults: 9 16 10 2)")
                 .num_args(0..=4)
-                .value_names(["x1", "y1", "x2", "y2"]),
+                .value_names(["height", "width", "sect_u", "sect_v"]),
         )
         .arg(
             Arg::new("generate_json")
@@ -25,27 +27,22 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let matches = app.get_matches();
 
-    let mut x1 = 9;
-    let mut y1 = 16;
-    let mut x2 = 10;
-    let mut y2 = 2;
-
     if let Some(values) = matches.get_many::<String>("generate") {
         let v: Vec<String> = values.map(|s| s.to_string()).collect();
-        x1 = v.get(0).unwrap_or(&"9".to_string()).parse().unwrap_or(9);
-        y1 = v.get(1).unwrap_or(&"16".to_string()).parse().unwrap_or(16);
-        x2 = v.get(2).unwrap_or(&"10".to_string()).parse().unwrap_or(10);
-        y2 = v.get(3).unwrap_or(&"2".to_string()).parse().unwrap_or(2);
-    }
+        let height = v.first().unwrap_or(&"9".to_string()).parse().unwrap_or(9);
+        let width = v.get(1).unwrap_or(&"16".to_string()).parse().unwrap_or(16);
+        let sect_u = v.get(2).unwrap_or(&"10".to_string()).parse().unwrap_or(10);
+        let sect_v = v.get(3).unwrap_or(&"2".to_string()).parse().unwrap_or(2);
 
-    anoto_dots::gen_matrix(x1, y1, x2, y2)?;
+        anoto_dots::gen_matrix(height, width, sect_u, sect_v)?;
+        // gen_pdf::gen_all_dots_anoto_pdf()?;
+    }
 
     if let Some(values) = matches.get_many::<String>("generate_json") {
         let v: Vec<String> = values.map(|s| s.to_string()).collect();
-        let filename = v.get(0).unwrap_or(&"plot_data.json".to_string()).clone();
-        let x2: i32 = v.get(1).unwrap_or(&"10".to_string()).parse().unwrap_or(10);
-        let y2: i32 = v.get(2).unwrap_or(&"10".to_string()).parse().unwrap_or(10);
-        anoto_dots::gen_matrix_from_json(&filename, x2, y2)?;
+        let filename = v.first().unwrap_or(&"plot_data.json".to_string()).clone();
+        anoto_dots::gen_matrix_from_json(&filename)?;
+        // gen_pdf::gen_all_dots_anoto_pdf()?;
     }
 
     Ok(())
