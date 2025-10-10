@@ -84,3 +84,12 @@ pub fn load_array3_from_json(json_path: &str) -> Result<Array3<i32>, Box<dyn Err
     }
     Ok(bitmatrix)
 }
+
+pub fn load_6x6_section(json_path: &str) -> Result<Array3<i8>, Box<dyn Error>> {
+    let array3_i32 = load_array3_from_json(json_path)?;
+    if array3_i32.dim() != (6, 6, 2) {
+        return Err("Section file must contain a 6x6x2 array".into());
+    }
+    let array3_i8 = array3_i32.mapv(|x| x as i8);
+    Ok(array3_i8)
+}
